@@ -50,7 +50,7 @@ public class Treino implements Serializable {
 
     @Override
     public String toString() {
-        return String.format("Treino [ID= %d, Nome do Exercício= %s, Duração= %s, Data do Treino= %s]",
+        return String.format("Treino: [ID= %d, Nome do Exercício= %s, Duração= %s, Data do Treino= %s]",
                 id, nomeExercicio, duracao, dataTreino);
     }
 }
