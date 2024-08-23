@@ -2,15 +2,28 @@ package br.edu.ifsuldeminas.mch.championsgym;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.ContextMenu;
+import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ListView;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatButton;
 
+import java.util.List;
+
+import br.edu.ifsuldeminas.mch.championsgym.model.Treino;
+import br.edu.ifsuldeminas.mch.championsgym.model.db.TreinoDAO;
+
 
 public class MainActivity extends AppCompatActivity {
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -21,7 +34,7 @@ public class MainActivity extends AppCompatActivity {
         getSupportActionBar().hide();
 
         AppCompatButton btTreinos = findViewById(R.id.bt_treinos);
-        AppCompatButton btObjetivos = findViewById(R.id.bt_objetivos);
+        AppCompatButton btVideos = findViewById(R.id.bt_videos);
         AppCompatButton btPerfil = findViewById(R.id.bt_perfil);
 
         btTreinos.setOnClickListener(new View.OnClickListener() {
@@ -32,10 +45,10 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        btObjetivos.setOnClickListener(new View.OnClickListener() {
+        btVideos.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(MainActivity.this, FormObjetivo.class);
+                Intent intent = new Intent(MainActivity.this, Videos.class);
                 startActivity(intent);
             }
         });

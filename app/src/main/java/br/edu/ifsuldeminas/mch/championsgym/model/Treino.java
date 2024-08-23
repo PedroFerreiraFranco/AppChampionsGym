@@ -1,18 +1,14 @@
 package br.edu.ifsuldeminas.mch.championsgym.model;
 
-import java.sql.Time;
-import java.util.Date;
+import java.io.Serializable;
 
-public class Treino {
-    private int id;
+public class Treino implements Serializable {
+    private Integer id;
     private String nomeExercicio;
-    private Time duracao;
-    private Date dataTreino;
+    private String duracao;
+    private String dataTreino;
 
-    public Treino() {
-    }
-
-    public Treino(int id, String nomeExercicio, Time duracao, Date dataTreino) {
+    public Treino(int id, String nomeExercicio, String duracao, String dataTreino) {
         this.id = id;
         this.nomeExercicio = nomeExercicio;
         this.duracao = duracao;
@@ -20,11 +16,11 @@ public class Treino {
     }
 
     // Getters e Setters
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -36,30 +32,25 @@ public class Treino {
         this.nomeExercicio = nomeExercicio;
     }
 
-    public Time getDuracao() {
+    public String getDuracao() {
         return duracao;
     }
 
-    public void setDuracao(Time duracao) {
+    public void setDuracao(String duracao) {
         this.duracao = duracao;
     }
 
-    public Date getData() {
+    public String getDataTreino() {
         return dataTreino;
     }
 
-    public void setData(Date data) {
-        this.dataTreino = data;
+    public void setDataTreino(String dataTreino) {
+        this.dataTreino = dataTreino;
     }
 
-    // Método para exibir informações do treino
     @Override
     public String toString() {
-        return "Treino{" +
-                "id=" + id +
-                ", nomeExercicio='" + nomeExercicio + '\'' +
-                ", duracao=" + duracao +
-                ", data=" + dataTreino +
-                '}';
+        return String.format("Treino [ID= %d, Nome do Exercício= %s, Duração= %s, Data do Treino= %s]",
+                id, nomeExercicio, duracao, dataTreino);
     }
 }

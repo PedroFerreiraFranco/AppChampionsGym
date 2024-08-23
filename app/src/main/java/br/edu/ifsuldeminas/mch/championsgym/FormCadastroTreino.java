@@ -1,14 +1,16 @@
 package br.edu.ifsuldeminas.mch.championsgym;
 
+import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
-import android.widget.Button;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.EditText;
+import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-
-import java.sql.Date;
-import java.sql.Time;
+import androidx.appcompat.widget.Toolbar;
 
 import br.edu.ifsuldeminas.mch.championsgym.model.Treino;
 import br.edu.ifsuldeminas.mch.championsgym.model.db.TreinoDAO;
@@ -16,39 +18,87 @@ import br.edu.ifsuldeminas.mch.championsgym.model.db.TreinoDAO;
 public class FormCadastroTreino extends AppCompatActivity {
 
     private EditText editNomeTreino, editDuracao, editData;
-    private Button btnRegistrar;
-    private TreinoDAO treinoDAO;
+    private Treino treino;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_form_cadastro_treino);
 
-        treinoDAO = new TreinoDAO(this);
+        getSupportActionBar().hide();
 
-        // Inicializando os componentes
         editNomeTreino = findViewById(R.id.edit_nome_treino);
         editDuracao = findViewById(R.id.edit_duracao);
         editData = findViewById(R.id.edit_data);
-        btnRegistrar = findViewById(R.id.bt_registrarTreino);
 
-        btnRegistrar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Capturando os valores inseridos pelo usuário
-                String nomeExercicio = editNomeTreino.getText().toString();
-                Time duracao = Time.valueOf(editDuracao.getText().toString()); // Espera formato hh:mm:ss
-                Date data = Date.valueOf(editData.getText().toString()); // Espera formato yyyy-MM-dd
+        Intent intent = getIntent();
+        treino = (Treino) intent.getSerializableExtra("treino");
 
-                // Criando o objeto treino
-                Treino treino = new Treino(0, nomeExercicio, duracao, data);
+        if (treino != null) {
+            editNomeTreino.setText(treino.getNomeExercicio());
+            editDuracao.setText(treino.getDuracao());
+            editData.setText(treino.getDataTreino());
+        }
 
-                // Inserindo o treino no banco de dados
-                treinoDAO.addTreino(treino);
+        findViewById(R.id.bt_registrarTreino).setOnClickListener(v -> salvarTreino());
+    }
 
-                // Feedback ao usuário (você pode usar um Toast aqui, por exemplo)
-                finish(); // Fecha a Activity após o cadastro
+    private void salvarTreino() {
+        String nomeExercicio = editNomeTreino.getText().toString();
+        String duracao = editDuracao.getText().toString();
+        String dataTreino = editData.getText().toString();
+
+        if (nomeExercicio.isEmpty() || duracao.isEmpty() || dataTreino.isEmpty()) {
+            Toast.makeText(this, "Todos os campos devem ser preenchidos!", Toast.LENGTH_LONG).show();
+            return;
+        }
+
+        TreinoDAO treinoDAO = new TreinoDAO(this);
+
+        if (treino == null) {
+            treino = new Treino(0, nomeExercicio, duracao, dataTreino);
+            treinoDAO.save(treino);
+            Toast.makeText(this, "Treino cadastrado com sucesso!", Toast.LENGTH_LONG).show();
+        } else {
+            treino.setNomeExercicio(nomeExercicio);
+            treino.setDuracao(duracao);
+            treino.setDataTreino(dataTreino);
+            treinoDAO.update(treino);
+            Toast.makeText(this, "Treino atualizado com sucesso!", Toast.LENGTH_LONG).show();
+        }
+
+        Intent resultIntent = new Intent();
+        resultIntent.putExtra("novoTreino", treino);
+        setResult(RESULT_OK, resultIntent);
+        finish();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_toolbar, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if (item.getItemId() == R.id.action_share) {
+            if (treino != null) {
+                // Compartilhar o treino cadastrado
+                String mensagem = "Confira meu treino: " +
+                        "\nNome: " + treino.getNomeExercicio() +
+                        "\nDuração: " + treino.getDuracao() +
+                        "\nData: " + treino.getDataTreino();
+
+                Intent shareIntent = new Intent(Intent.ACTION_SEND);
+                shareIntent.setType("text/plain");
+                shareIntent.putExtra(Intent.EXTRA_TEXT, mensagem);
+                startActivity(Intent.createChooser(shareIntent, "Compartilhar Treino via"));
+
+            } else {
+                Toast.makeText(this, "Nenhum treino cadastrado para compartilhar!", Toast.LENGTH_LONG).show();
             }
-        });
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }
